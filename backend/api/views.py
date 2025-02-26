@@ -7,13 +7,16 @@ import json
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
+from .serializers import ProductSerializer
+
 
 @api_view(["GET"])
 def home_view(request):
-    model_data = Product.objects.all().order_by("?").first()
+    instance = Product.objects.all().order_by("?").first()
+    data = {}
+    if instance:
+        # data = model_to_dict(model_data, fields=['id' ,'title', 'price', 'sale_price'])
+        # data['sale_price'] = model_data.sale_price
+        data = ProductSerializer(instance).data
 
-    if model_data:
-        data = model_to_dict(model_data, fields=['id' ,'title', 'price', 'sale_price'])
-        data['sale_price'] = model_data.sale_price
-
-    return Response(data, headers={"content-type":"application/json"})
+    return Response(data)
