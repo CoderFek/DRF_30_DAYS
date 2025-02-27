@@ -9,4 +9,7 @@
 ### Day 2 ✅:
  - Understanding Serializers
  - Post method using serializer
- - Generics 
+ - Generics [CreateApiView, RetrieveApiView, ListApiView]
+
+### Day 3 ✅:
+ - GET and POST operations using Function based Views
