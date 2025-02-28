@@ -22,39 +22,35 @@ class ProductCreateView(generics.CreateAPIView):
         serializer.save(content=content)
         return Response(serializer.data)
 
+product_create_view = ProductCreateView.as_view()
         
 
 class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-@api_view(['GET','POST'])
-def product_alt_view(request, pk=None, *args, **kwargs):
-    method = request.method
+product_detail_view = ProductDetailView.as_view()
 
-    #GET
-    if method == 'GET':
-        '''
-        Detail view
-        '''
-        if pk is not None:
-            obj = get_object_or_404(Product, pk=pk)
-            data = ProductSerializer(obj, many=False).data
-            return Response(data)
-        '''
-        List view
-        '''
-        queryset = Product.objects.all()
-        data = ProductSerializer(queryset, many=True).data
-        return Response(data)
-    #POST
-    if method == 'POST':
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            title = serializer.validated_data.get('title')
-            content = serializer.validated_data.get('content') or None
-            if content is None:
-                content=title
-            serializer.save(content=content)
-            return Response(serializer.data)
-        return Response({"error":"invalid data"}, status=400)
+
+class ProductUpdateView(generics.UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        if instance.content is None:
+            instance.content = instance.title
+
+product_update_view = ProductUpdateView.as_view()
+
+class ProductDeleteView(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+
+    def perform_destroy(self, instance):
+        #instance operations if any
+        super().perform_destroy(instance)
+
+product_delete_view = ProductDeleteView.as_view()
