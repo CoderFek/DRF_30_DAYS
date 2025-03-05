@@ -17,3 +17,7 @@
 ### Day 4 ✅:
  - Generics [UpdateAPIView, DestroyAPIView]
  - Mixins
+
+### Day 5 ✅:
+ - Simple Authentication using DjangoAuthModel
+ - Authentication using tokens
