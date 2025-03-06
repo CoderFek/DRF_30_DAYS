@@ -1,23 +1,20 @@
 from django.shortcuts import render
-from rest_framework import generics, authentication, mixins, permissions
+from rest_framework import generics
 from api.serializers import ProductSerializer
 from api.models import Product
-from .permissions import IsStaffEditorPermission
+
+from api.mixins import StaffEditorPermissionMixin
 
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from django.shortcuts import get_object_or_404
+
 
 # Create your views here.
 
-class ProductListCreateView(generics.ListCreateAPIView):
+class ProductListCreateView(
+    StaffEditorPermissionMixin,
+    generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [
-        authentication.SessionAuthentication,
-        authentication.TokenAuthentication
-    ]
-    permission_classes = [IsStaffEditorPermission]
 
     def perform_create(self, serializer):
         # print(serializer.validated_data)
@@ -31,14 +28,18 @@ class ProductListCreateView(generics.ListCreateAPIView):
 product_create_view = ProductListCreateView.as_view()
         
 
-class ProductDetailView(generics.RetrieveAPIView):
+class ProductDetailView(
+    StaffEditorPermissionMixin,
+    generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
 product_detail_view = ProductDetailView.as_view()
 
 
-class ProductUpdateView(generics.UpdateAPIView):
+class ProductUpdateView(
+    StaffEditorPermissionMixin,
+    generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
@@ -51,7 +52,9 @@ class ProductUpdateView(generics.UpdateAPIView):
 product_update_view = ProductUpdateView.as_view()
 
 
-class ProductDeleteView(generics.DestroyAPIView):
+class ProductDeleteView(
+    StaffEditorPermissionMixin,
+    generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
